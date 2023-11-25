@@ -40,14 +40,14 @@ int main()
     Tensor *X = to_tensor(X_data, 4, 2);
     Tensor *y = to_tensor(y_data, 4, 1);
     Tensor *W1 = scalar_mul(ones(2, 4), 0.1);
-    Tensor *b1 = scalar_mul(ones(4, 4), 0.1);
+    Tensor *b1 = scalar_mul(ones(4, 4), 0);
     Tensor *W2 = scalar_mul(ones(4, 1), 0.1);
-    Tensor *b2 = scalar_mul(ones(4, 1), 0.1);
+    Tensor *b2 = scalar_mul(ones(4, 1), 0);
 
     // Training
 
     Tensor *h, *out;
-    for (int i = 0; i < 21; i++)
+    for (int i = 0; i < 10001; i++)
     {
         // Forward Pass
 
@@ -58,8 +58,9 @@ int main()
         // Calculating and printing the loss
 
         double loss = mean_squared_loss(y, out);
-        printf("Epoch : %d Loss : %f\n", i, loss);
-
+		if (i%1000 == 0){
+			printf("Epoch : %d Loss : %f\n", i, loss);
+		}
         // Backpropagation
 
         Tensor *dL_dout = scalar_mul(sub(out, y), 2);
