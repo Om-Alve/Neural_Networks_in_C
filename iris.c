@@ -58,7 +58,9 @@ int main()
 
     // Training
 
-    Tensor *h1, *h1_act, *h2, *h2_act, *out, *probs, *preds;
+    Tensor *h1, *h1_act, *h2, *h2_act, *out, *probs, *preds,*dL_dprobs, 
+            *dprobs_dW3, *dL_dW3, *dL_db3, *dout_dh2, *dL_dh2, *dL_dz2, *dz_dW2,
+            *dL_dW2, *dL_db2, *dh2_dh1, *dL_dh1, *dL_dz1, *dz_dW1, *dL_dW1, *dL_db1;
     for (int i = 0; i < 101; i++)
     {
         // Forward Pass
@@ -78,22 +80,22 @@ int main()
             printf("Epoch : %d Loss : %f\n", i, loss);
         }
         // Backpropagation
-        Tensor *dL_dprobs = Softmax_crossentropy_backprop(probs, y);
-        Tensor *dprobs_dW3 = h2_act;
-        Tensor *dL_dW3 = dot(transpose(dprobs_dW3), dL_dprobs);
-        Tensor *dL_db3 = dL_dprobs;
-        Tensor *dout_dh2 = W3;
-        Tensor *dL_dh2 = dot(dL_dprobs, transpose(dout_dh2));
-        Tensor *dL_dz2 = mul(dL_dh2, derivative_relu(h2_act));
-        Tensor *dz_dW2 = h1;
-        Tensor *dL_dW2 = dot(transpose(dz_dW2), dL_dz2);
-        Tensor *dL_db2 = dL_dz2;
-        Tensor *dh2_dh1 = W2;
-        Tensor *dL_dh1 = dot(dL_dh2, transpose(dh2_dh1));
-        Tensor *dL_dz1 = mul(dL_dh1, derivative_relu(h1_act));
-        Tensor *dz_dW1 = X;
-        Tensor *dL_dW1 = dot(transpose(dz_dW1), dL_dz1);
-        Tensor *dL_db1 = dL_dz1;
+        dL_dprobs = Softmax_crossentropy_backprop(probs, y);
+        dprobs_dW3 = h2_act;
+        dL_dW3 = dot(transpose(dprobs_dW3), dL_dprobs);
+        dL_db3 = dL_dprobs;
+        dout_dh2 = W3;
+        dL_dh2 = dot(dL_dprobs, transpose(dout_dh2));
+        dL_dz2 = mul(dL_dh2, derivative_relu(h2_act));
+        dz_dW2 = h1;
+        dL_dW2 = dot(transpose(dz_dW2), dL_dz2);
+        dL_db2 = dL_dz2;
+        dh2_dh1 = W2;
+        dL_dh1 = dot(dL_dh2, transpose(dh2_dh1));
+        dL_dz1 = mul(dL_dh1, derivative_relu(h1_act));
+        dz_dW1 = X;
+        dL_dW1 = dot(transpose(dz_dW1), dL_dz1);
+        dL_db1 = dL_dz1;
         // Updating parameters with Gradient descent
 
         W1 = sub(W1, scalar_mul(dL_dW1, lr));
@@ -125,8 +127,31 @@ int main()
     free_tensor(b1);
     free_tensor(W2);
     free_tensor(b2);
+    free_tensor(W3);
+    free_tensor(b3);
     free_tensor(h1);
+    free_tensor(h1_act);
+    free_tensor(h2);
+    free_tensor(h2_act);
     free_tensor(out);
+    free_tensor(probs);
+    free_tensor(preds);
+    free_tensor(dL_dprobs);
+    free_tensor(dprobs_dW3);
+    free_tensor(dL_dW3);
+    free_tensor(dL_db3);
+    free_tensor(dout_dh2);
+    free_tensor(dL_dh2);
+    free_tensor(dL_dz2);
+    free_tensor(dz_dW2);
+    free_tensor(dL_dW2);
+    free_tensor(dL_db2);
+    free_tensor(dh2_dh1);
+    free_tensor(dL_dh1);
+    free_tensor(dL_dz1);
+    free_tensor(dz_dW1);
+    free_tensor(dL_dW1);
+    free_tensor(dL_db1);
 
     return 0;
 }
