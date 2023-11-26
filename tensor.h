@@ -199,7 +199,7 @@ Tensor *argmax(Tensor *x)
                 maxidx = j;
             }
         }
-        data[i][0] = maxidx;
+        data[i][0] = (double)maxidx;
     }
     ans->data = data;
     return ans;

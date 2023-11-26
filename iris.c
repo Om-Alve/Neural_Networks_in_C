@@ -31,7 +31,7 @@ int main()
         {
             labels[idx][0] = 0;
         }
-        else if (strcmp(token, "Iris-versicolor") == 0)
+        else if (strcmp(token, "Iris-versicolor\n") == 0)
         {
             labels[idx][0] = 1;
         }
@@ -48,7 +48,7 @@ int main()
     Tensor *X = to_tensor(features, 150, 4);
     Tensor *y = to_tensor(labels, 150, 1);
 
-    double lr = 0.1;
+    double lr = 0.11;
     Tensor *W1 = scalar_mul(ones(4, 100), 0.01);
     Tensor *b1 = scalar_mul(ones(150, 100), 0);
     Tensor *W2 = scalar_mul(ones(100, 100), 0.01);
@@ -105,20 +105,18 @@ int main()
     }
     preds = argmax(probs);
     printf("Expected output: \n");
-    // display(y);
-    for (int i = 0; i < 5; i++)
+    for (int i = 0,j=0; j < 5; i+=30,j++)
     {
         printf("%.1f ", y->data[i][0]);
     }
     printf("\n");
     printf("Model's output: \n");
-    // display(out);
-    for (int i = 0; i < 5; i++)
+    for (int i = 0,j=0; j < 5; i+=30,j++)
     {
         printf("%.1f ", preds->data[i][0]);
     }
     printf("\n");
-    printf("%f", cross_entropy_loss(y, probs));
+    printf("Final Loss : %f", cross_entropy_loss(y, probs));
     // Freeing allocated memory
 
     free_tensor(X);
