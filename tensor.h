@@ -8,6 +8,43 @@ typedef struct
     int r, c;
 } Tensor;
 
+Tensor* ones(int r, int c);
+Tensor* zeros(int r, int c); 
+
+Tensor* uniform(int r, int c, float lb, float ub);
+Tensor* randn(int r, int c);
+
+Tensor* kaiming_init(int fin, int fout, double gain);
+
+Tensor* sum(Tensor* a, Tensor* b);
+Tensor* mul(Tensor* a, Tensor* b);
+Tensor* sub(Tensor* a, Tensor* b);
+
+Tensor* dot(Tensor* a, Tensor* b);
+Tensor* scalar_mul(Tensor* x, double y);
+
+Tensor* derivative_tanh(Tensor* x);  
+Tensor* transpose(Tensor* x);
+
+Tensor* argmax(Tensor* x);
+
+Tensor* Relu_activation(Tensor* x);
+Tensor* derivative_relu(Tensor* x); 
+Tensor* tanh_activation(Tensor* x);
+
+double cross_entropy_loss(Tensor* y_true, Tensor* y_pred); 
+
+Tensor* softmax_activation(Tensor* y_true, Tensor* y_pred);
+
+Tensor* Softmax_crossentropy_backprop(Tensor* y_pred, Tensor* y_true); 
+
+double mean_squared_loss(Tensor* y_true, Tensor* y_pred);
+
+Tensor* to_tensor(double** array, int rows, int cols);
+void free_tensor(Tensor* tensor);  
+
+void display(Tensor* m);
+
 Tensor *ones(int r, int c)
 {
     Tensor *m = (Tensor *)malloc(sizeof(Tensor));
@@ -27,6 +64,75 @@ Tensor *ones(int r, int c)
     }
     m->data = mat;
     return m;
+}
+
+Tensor *zeros(int r, int c)
+{
+    Tensor *m = (Tensor *)malloc(sizeof(Tensor));
+    m->r = r;
+    m->c = c;
+    double **mat = (double **)malloc(r * sizeof(double *));
+    for (int i = 0; i < r; i++)
+    {
+        mat[i] = (double *)malloc(c * sizeof(double));
+    }
+    for (int i = 0; i < r; i++)
+    {
+        for (int j = 0; j < c; j++)
+        {
+            mat[i][j] = 0;
+        }
+    }
+    m->data = mat;
+    return m;
+}
+
+Tensor* uniform(int r, int c, float lb, float ub) {
+
+  Tensor* m = (Tensor*) malloc(sizeof(Tensor));
+  m->r = r;
+  m->c = c;
+  
+  double** mat = (double**) malloc(r * sizeof(double*));
+  for(int i = 0; i < r; i++) {
+    mat[i] = (double*) malloc(c * sizeof(double)); 
+  }
+
+  for(int i = 0; i < r; i++) {
+    for(int j = 0; j < c; j++) {
+      double range = ub - lb;
+      mat[i][j] = lb + (rand() / (double)RAND_MAX) * range;
+    }
+  }
+
+  m->data = mat;
+  
+  return m; 
+}
+
+Tensor *randn(int r, int c)
+{
+    Tensor *m = (Tensor *)malloc(sizeof(Tensor));
+    m->r = r;
+    m->c = c;
+    double **mat = (double **)malloc(r * sizeof(double *));
+    for (int i = 0; i < r; i++)
+    {
+        mat[i] = (double *)malloc(c * sizeof(double));
+    }
+    for (int i = 0; i < r; i++)
+    {
+        for (int j = 0; j < c; j++)
+        {
+            mat[i][j] = (double)rand() / (double)RAND_MAX ;
+        }
+    }
+    m->data = mat;
+    return m;
+}
+
+Tensor* kaiming_init(int fin,int fout,double gain){
+    return scalar_mul(randn(fin, fout), gain * sqrt(3/fin));
 }
 
 Tensor *sum(Tensor *a, Tensor *b)
@@ -203,6 +309,17 @@ Tensor *argmax(Tensor *x)
     }
     ans->data = data;
     return ans;
+}
+
+double accuracy(Tensor* y_true,Tensor* y_pred){
+    double acc = 0.0;
+    for (int i = 0; i < y_true->r; i++)
+    {
+        if(y_true->data[i][0] == y_pred->data[i][0]){
+            acc++;
+        }
+    }
+    return acc/y_true->r * 100.0;
 }
 
 Tensor *Relu_activation(Tensor *x)

@@ -48,20 +48,20 @@ int main()
     Tensor *X = to_tensor(features, 150, 4);
     Tensor *y = to_tensor(labels, 150, 1);
 
-    double lr = 0.11;
-    Tensor *W1 = scalar_mul(ones(4, 100), 0.01);
-    Tensor *b1 = scalar_mul(ones(150, 100), 0);
-    Tensor *W2 = scalar_mul(ones(100, 100), 0.01);
-    Tensor *b2 = scalar_mul(ones(150, 100), 0);
-    Tensor *W3 = scalar_mul(ones(100, 3), 0.01);
-    Tensor *b3 = scalar_mul(ones(150, 3), 0);
+    double lr = 0.1;
+    Tensor *W1 = kaiming_init(4,100,sqrt(2));
+    Tensor *b1 = zeros(150, 100);
+    Tensor *W2 = kaiming_init(100, 100,sqrt(2));
+    Tensor *b2 = zeros(150, 100);
+    Tensor *W3 = kaiming_init(100, 3,sqrt(2));
+    Tensor *b3 = zeros(150, 3);
 
     // Training
 
     Tensor *h1, *h1_act, *h2, *h2_act, *out, *probs, *preds,*dL_dprobs, 
             *dprobs_dW3, *dL_dW3, *dL_db3, *dout_dh2, *dL_dh2, *dL_dz2, *dz_dW2,
             *dL_dW2, *dL_db2, *dh2_dh1, *dL_dh1, *dL_dz1, *dz_dW1, *dL_dW1, *dL_db1;
-    for (int i = 0; i < 101; i++)
+    for (int i = 0; i < 401; i++)
     {
         // Forward Pass
 
@@ -75,7 +75,7 @@ int main()
         // Calculating and printing the loss
 
         double loss = cross_entropy_loss(y, probs);
-        if (i % 10 == 0)
+        if (i % 100 == 0)
         {
             printf("Epoch : %d Loss : %f\n", i, loss);
         }
@@ -118,7 +118,7 @@ int main()
         printf("%.1f ", preds->data[i][0]);
     }
     printf("\n");
-    printf("Final Loss : %f", cross_entropy_loss(y, probs));
+    printf("Final Accuracy : %f", accuracy(y, preds));
     // Freeing allocated memory
 
     free_tensor(X);
